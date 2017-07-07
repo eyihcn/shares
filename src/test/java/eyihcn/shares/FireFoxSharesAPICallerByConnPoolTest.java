@@ -56,6 +56,7 @@ public class FireFoxSharesAPICallerByConnPoolTest extends AbstractJUnit4SpringCo
 
 	@Test
 	public void test2() {
+
 		String respStr = fireFoxSharesAPICallerByConnPool.request();
 		String jsonStr = respStr.replace("historySearchHandler([", "").replace("])", "");
 		Gson gson = new Gson();
