@@ -23,8 +23,9 @@ public class FireFoxSharesAPICallerByConnPool {
 
 	/** 一次最多请求100条数据 */
 	public String request(String sharesCode, String startDate, String endDate) {
-
-		return restTemplate.getForObject(generateHisHqUrl(sharesCode, startDate, endDate), String.class);
+		String generateHisHqUrl = generateHisHqUrl(sharesCode, startDate, endDate);
+		log.debug("generateHisHqUrl: "+generateHisHqUrl);
+		return restTemplate.getForObject(generateHisHqUrl, String.class);
 	}
 
 	/*
@@ -44,8 +45,8 @@ public class FireFoxSharesAPICallerByConnPool {
 
 		Map<String, String> param = Maps.newHashMap();
 		param.put("code", shareCodePrefix + sharesCode);
-		param.put("start", startDate);
-		param.put("end", endDate);
+		param.put("start", startDate.replaceAll("-", ""));
+		param.put("end", endDate.replaceAll("-", ""));
 		param.put("stat", "1");
 		param.put("order", "D");
 		param.put("period", "d");

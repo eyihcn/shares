@@ -6,15 +6,15 @@ public class DayLineFromSouHu extends BaseEntity<Integer> {
 	private Integer id;
 	private String sharesCode; // 股票编码
 	private String date;// 日期
-	private float openingPrice; // 开盘价
-	private float closingPrice; // 收盘价
-	private float fluctuation;// 涨跌额 正数代表涨，负数代表跌
-	private float fluctuationPercent;// 涨跌百分比 %
-	private float highestPrice; // 最高价
-	private float lowestPrice; // 最低价
+	private double openingPrice; // 开盘价
+	private double closingPrice; // 收盘价
+	private double fluctuation;// 涨跌额 正数代表涨，负数代表跌
+	private double fluctuationPercent;// 涨跌百分比 %
+	private double highestPrice; // 最高价
+	private double lowestPrice; // 最低价
 	private int volume; // 成交量（手）
-	private float tradedAmount; // 成交金额（万）
-	private float turnoverRate;// 换手率 %
+	private double tradedAmount; // 成交金额（万）
+	private double turnoverRate;// 换手率 %
 
 	@Override
 	public Integer getId() {
@@ -42,51 +42,51 @@ public class DayLineFromSouHu extends BaseEntity<Integer> {
 		this.date = date;
 	}
 
-	public float getOpeningPrice() {
+	public double getOpeningPrice() {
 		return openingPrice;
 	}
 
-	public void setOpeningPrice(float openingPrice) {
+	public void setOpeningPrice(double openingPrice) {
 		this.openingPrice = openingPrice;
 	}
 
-	public float getClosingPrice() {
+	public double getClosingPrice() {
 		return closingPrice;
 	}
 
-	public void setClosingPrice(float closingPrice) {
+	public void setClosingPrice(double closingPrice) {
 		this.closingPrice = closingPrice;
 	}
 
-	public float getFluctuation() {
+	public double getFluctuation() {
 		return fluctuation;
 	}
 
-	public void setFluctuation(float fluctuation) {
+	public void setFluctuation(double fluctuation) {
 		this.fluctuation = fluctuation;
 	}
 
-	public float getFluctuationPercent() {
+	public double getFluctuationPercent() {
 		return fluctuationPercent;
 	}
 
-	public void setFluctuationPercent(float fluctuationPercent) {
+	public void setFluctuationPercent(double fluctuationPercent) {
 		this.fluctuationPercent = fluctuationPercent;
 	}
 
-	public float getHighestPrice() {
+	public double getHighestPrice() {
 		return highestPrice;
 	}
 
-	public void setHighestPrice(float highestPrice) {
+	public void setHighestPrice(double highestPrice) {
 		this.highestPrice = highestPrice;
 	}
 
-	public float getLowestPrice() {
+	public double getLowestPrice() {
 		return lowestPrice;
 	}
 
-	public void setLowestPrice(float lowestPrice) {
+	public void setLowestPrice(double lowestPrice) {
 		this.lowestPrice = lowestPrice;
 	}
 
@@ -98,19 +98,19 @@ public class DayLineFromSouHu extends BaseEntity<Integer> {
 		this.volume = volume;
 	}
 
-	public float getTradedAmount() {
+	public double getTradedAmount() {
 		return tradedAmount;
 	}
 
-	public void setTradedAmount(float tradedAmount) {
+	public void setTradedAmount(double tradedAmount) {
 		this.tradedAmount = tradedAmount;
 	}
 
-	public float getTurnoverRate() {
+	public double getTurnoverRate() {
 		return turnoverRate;
 	}
 
-	public void setTurnoverRate(float turnoverRate) {
+	public void setTurnoverRate(double turnoverRate) {
 		this.turnoverRate = turnoverRate;
 	}
 

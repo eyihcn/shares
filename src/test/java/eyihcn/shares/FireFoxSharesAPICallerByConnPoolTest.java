@@ -1,7 +1,9 @@
 package eyihcn.shares;
 
+
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Iterator;
 
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -23,6 +25,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import com.google.gson.Gson;
 
+import eyihcn.dao.DayLineFromSouHuDao;
 import eyihcn.dao.SharesEntityDao;
 import eyihcn.entity.HisHqEntity;
 import eyihcn.entity.SharesEntity;
@@ -40,6 +43,10 @@ public class FireFoxSharesAPICallerByConnPoolTest extends AbstractJUnit4SpringCo
 	@Qualifier("sharesEntityDao")
 	SharesEntityDao sharesEntityDao;
 
+	@Autowired
+	@Qualifier("dayLineFromSouHuDao")
+	DayLineFromSouHuDao dayLineFromSouHuDao;
+
 	long start;
 
 	@Before
@@ -56,21 +63,18 @@ public class FireFoxSharesAPICallerByConnPoolTest extends AbstractJUnit4SpringCo
 
 	@Test
 	public void test2() {
-
-		String respStr = fireFoxSharesAPICallerByConnPool.request();
-		String jsonStr = respStr.replace("historySearchHandler([", "").replace("])", "");
-		Gson gson = new Gson();
-		HisHqEntity en = gson.fromJson(jsonStr, HisHqEntity.class);
-		System.out.println(en.getCode());
+		BigDecimal bigG=new BigDecimal("2.013").setScale(2, BigDecimal.ROUND_DOWN); //期望得到12.4
+		System.out.println("test G:"+bigG.doubleValue()); 
 	}
 
-	public void querySouHuBySharesCode(String code) {
-
+	@Test
+	public void querySouHuBySharesCode() {
+		new UpdateDayLineDateTask(fireFoxSharesAPICallerByConnPool,sharesEntityDao,dayLineFromSouHuDao,1,1).run();
 	}
 
 	@Test
 	public void testExportExecel() {
-		String absPath = "C:\\Users\\Administrator\\Desktop\\2017-07-05-18-25_沪.xls";
+		String absPath = "C:\\Users\\lenovo\\Desktop\\2017-07-08-16-29_深.xls";
 		FileInputStream in = null;
 		try {
 			in = new FileInputStream(absPath);
@@ -158,8 +162,9 @@ public class FireFoxSharesAPICallerByConnPoolTest extends AbstractJUnit4SpringCo
 
 	@Test
 	public void testQuery() {
-		String respStr = fireFoxSharesAPICallerByConnPool.request();
+		String respStr = fireFoxSharesAPICallerByConnPool.request("603388","2017-03-24","2017-07-07");
 		String jsonStr = respStr.replace("historySearchHandler([", "").replace("])", "");
+		System.out.println(jsonStr);
 		Gson gson = new Gson();
 		HisHqEntity en = gson.fromJson(jsonStr, HisHqEntity.class);
 		System.out.println(en.getCode());
