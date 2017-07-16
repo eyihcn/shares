@@ -159,7 +159,7 @@
 
 	</dependencies>
 	<build>
-		<finalName>HaiTaoLe-api</finalName>
+		<finalName>shares</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

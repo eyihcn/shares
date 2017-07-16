@@ -3,7 +3,7 @@ package eyihcn.shares;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -23,12 +23,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import com.google.gson.Gson;
-
 import eyihcn.dao.DayLineFromSouHuDao;
 import eyihcn.dao.SharesEntityDao;
-import eyihcn.entity.HisHqEntity;
 import eyihcn.entity.SharesEntity;
+import eyihcn.shares.utlis.DateUtils;
 
 @ContextConfiguration(locations = { "classpath:/applicationContext-test.xml", "classpath:/mongodb.xml" })
 public class FireFoxSharesAPICallerByConnPoolTest extends AbstractJUnit4SpringContextTests {
@@ -47,6 +45,10 @@ public class FireFoxSharesAPICallerByConnPoolTest extends AbstractJUnit4SpringCo
 	@Qualifier("dayLineFromSouHuDao")
 	DayLineFromSouHuDao dayLineFromSouHuDao;
 
+	@Autowired
+	@Qualifier("pullDayLineClient")
+	PullDayLineClient pullDayLineClient;
+
 	long start;
 
 	@Before
@@ -60,16 +62,15 @@ public class FireFoxSharesAPICallerByConnPoolTest extends AbstractJUnit4SpringCo
 		log.info("~~~~~~~~~~ test cost time ms : " + (System.currentTimeMillis() - start));
 		log.info("=========================== teardown ~");
 	}
-
+	
 	@Test
-	public void test2() {
-		BigDecimal bigG=new BigDecimal("2.013").setScale(2, BigDecimal.ROUND_DOWN); //期望得到12.4
-		System.out.println("test G:"+bigG.doubleValue()); 
+	public void querySouHuBySharesCodeAll() {
+		pullDayLineClient.pullAll();
 	}
 
 	@Test
 	public void querySouHuBySharesCode() {
-		new UpdateDayLineDateTask(fireFoxSharesAPICallerByConnPool,sharesEntityDao,dayLineFromSouHuDao,1,1).run();
+		new UpdateDayLineDateTask(null,fireFoxSharesAPICallerByConnPool,sharesEntityDao,dayLineFromSouHuDao,1,1).run();
 	}
 
 	@Test
@@ -162,12 +163,14 @@ public class FireFoxSharesAPICallerByConnPoolTest extends AbstractJUnit4SpringCo
 
 	@Test
 	public void testQuery() {
-		String respStr = fireFoxSharesAPICallerByConnPool.request("603388","2017-03-24","2017-07-07");
-		String jsonStr = respStr.replace("historySearchHandler([", "").replace("])", "");
-		System.out.println(jsonStr);
-		Gson gson = new Gson();
-		HisHqEntity en = gson.fromJson(jsonStr, HisHqEntity.class);
-		System.out.println(en.getCode());
+		String respStr = fireFoxSharesAPICallerByConnPool.request("000958","1999-07-05","1999-11-21");
+		System.out.println(respStr);
+		System.out.println(DateUtils.formatDate(new Date()));
+//		String jsonStr = respStr.replace("historySearchHandler([", "").replace("])", "");
+//		System.out.println(jsonStr);
+//		Gson gson = new Gson();
+//		HisHqEntity en = gson.fromJson(jsonStr, HisHqEntity.class);
+//		System.out.println(en.getCode());
 	}
 
 }

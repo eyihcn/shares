@@ -83,5 +83,7 @@
 	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate" />
 	
 	<bean id="fireFoxSharesAPICallerByConnPool" class="eyihcn.shares.FireFoxSharesAPICallerByConnPool" />
+
+	<bean id="pullDayLineClient" class="eyihcn.shares.PullDayLineClient" />
 	
 </beans>

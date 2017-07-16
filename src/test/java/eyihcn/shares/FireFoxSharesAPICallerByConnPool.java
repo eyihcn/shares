@@ -41,7 +41,7 @@ public class FireFoxSharesAPICallerByConnPool {
 		&r=0.7529744863517391&0.4995255315817104
 	 */
 	private String generateHisHqUrl(String sharesCode,String startDate, String endDate) {
-		// "http://q.stock.sohu.com/hisHq?code=cn_603388&start=20170224&end=20170604&stat=1&order=D&period=d&callback=historySearchHandler&rt=jsonp&r=0.7529744863517391&0.4995255315817104";
+		// "http://q.stock.sohu.com/hisHq?code=cn_002848&start=20160518&end=20161005&stat=1&order=D&period=d&callback=historySearchHandler&rt=jsonp&r=0.7529744863517391&0.4995255315817104";
 
 		Map<String, String> param = Maps.newHashMap();
 		param.put("code", shareCodePrefix + sharesCode);

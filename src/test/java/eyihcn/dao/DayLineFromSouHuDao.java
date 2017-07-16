@@ -14,7 +14,7 @@ public class DayLineFromSouHuDao extends BaseMongoDao<DayLineFromSouHu, Integer>
 	}
 
 	public boolean checkExistsByDateAndSharesCode(String date, String sharesCode) {
-		return super.checkExists(Criteria.where("date").is(date).and("sharesCode"));
+		return super.checkExists(Criteria.where("date").is(date).and("sharesCode").is(sharesCode));
 	}
 
 }
