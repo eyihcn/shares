@@ -30,7 +30,6 @@ public class UpdateDayLineDateTask implements Runnable {
 	private SharesEntityDao sharesEntityDao;
 	private DayLineFromSouHuDao dayLineFromSouHuDao;
 
-	
 	private String startDay = null;
 	private String endDay = null;
 	private int pageNumber;
@@ -44,9 +43,9 @@ public class UpdateDayLineDateTask implements Runnable {
 		super();
 	}
 
-	public UpdateDayLineDateTask(CountDownLatch countDownLatch ,FireFoxSharesAPICallerByConnPool fireFoxSharesAPICallerByConnPool, SharesEntityDao sharesEntityDao, DayLineFromSouHuDao dayLineFromSouHuDao, int pageNumber, int pageSize) {
-		this( fireFoxSharesAPICallerByConnPool, sharesEntityDao, dayLineFromSouHuDao, "",
-			DateUtils.formatDate(new Date()), pageNumber, pageSize,  countDownLatch);
+	public UpdateDayLineDateTask(CountDownLatch countDownLatch, FireFoxSharesAPICallerByConnPool fireFoxSharesAPICallerByConnPool, SharesEntityDao sharesEntityDao,
+			DayLineFromSouHuDao dayLineFromSouHuDao, int pageNumber, int pageSize) {
+		this(fireFoxSharesAPICallerByConnPool, sharesEntityDao, dayLineFromSouHuDao, "", DateUtils.formatDate(new Date()), pageNumber, pageSize, countDownLatch);
 		// 不传入起始时间
 	}
 
@@ -75,8 +74,8 @@ public class UpdateDayLineDateTask implements Runnable {
 			while (DateUtils.isWeekendDay(today)) {
 				date = DateUtils.formatDate(today);
 				if (!isEqualOrBetween(date)) {
-					log.info("日期 : "+date+" 不在限定日期区间范围之内：" +this.startDay  + "  ~ " + this.endDay );
-					return  ;
+					log.info("日期 : " + date + " 不在限定日期区间范围之内：" + this.startDay + "  ~ " + this.endDay);
+					return;
 				}
 				log.info(date + " 深沪A股休市！");
 				// 向前推一天
@@ -84,8 +83,8 @@ public class UpdateDayLineDateTask implements Runnable {
 			}
 			date = DateUtils.formatDate(today);
 			if (!isEqualOrBetween(date)) {
-				log.info("日期 : "+date+" 不在限定日期区间范围之内：" +this.startDay  + "  ~ " + this.endDay );
-				return  ;
+				log.info("日期 : " + date + " 不在限定日期区间范围之内：" + this.startDay + "  ~ " + this.endDay);
+				return;
 			}
 			// 一个线程处理100只股票
 			for (SharesEntity sharesEntity : sharesEntityList) {
@@ -102,52 +101,67 @@ public class UpdateDayLineDateTask implements Runnable {
 
 				String startDate = null;
 				String endDate = new String(date);
-				
-					P: while (true) {
-						// 每次查询最多100条数据
-						startDate = getStartdateFromEnd(endDate);
-						if (StringUtils.isNotBlank(this.startDay)) {
-							if (this.startDay.compareTo(endDate) > 0) {
-								log.info("待抓去日期区间 : "+startDate + "  ~ " + endDate+" 不在限定日期区间范围之内：" +this.startDay  + "  ~ " + this.endDay );
-								return ;
+
+				P: while (true) {
+					// 每次查询最多100条数据
+					startDate = getStartdateFromEnd(endDate);
+					if (StringUtils.isNotBlank(this.startDay)) {
+						if (this.startDay.compareTo(endDate) > 0) {
+							log.info("待抓取日期区间 : " + startDate + "  ~ " + endDate + " 不在限定日期区间范围之内：" + this.startDay + "  ~ " + this.endDay);
+							return;
+						} else {
+							if (this.startDay.compareTo(startDate) >= 0) {
+
 							}
 						}
 						if (StringUtils.isNotBlank(this.endDay)) {
-							if (this.endDay.compareTo(startDate) < 0) {
-								log.info("待抓去日期区间 : "+startDate + "  ~ " + endDate+" 不在限定日期区间范围之内：" +this.startDay  + "  ~ " + this.endDay );
-								return ;
+							if (this.startDay.compareTo(startDate) > 0) {
+
 							}
+						} else {
+
 						}
-						//TODO　ｓｔａｒｔ。ｅｎｄ 
-						List<List<String>> hq = getDayLineFromSouHu(sharesEntity, startDate, endDate);
-						if (CollectionUtils.isEmpty(hq)) {
-							log.info("拉取目标：" + sharesEntity.getSharesNameCn() + "(" + sharesCode + ") ； 日期区间：" + startDate + "  ~ " + endDate + " ;拉取数据量为 0 ，结束");
-							break;
-						}
-						/*
-						 * 日期 0: 2017-07-07 ; 开盘价 1:38.30 ; 收盘价 2:39.33; 涨跌额
-						 * 3:0.85; 涨跌幅 4: 2.21%; 最低 5: 38.09; 最高 6:39.49; 成交量(手)
-						 * 7:36235; 成交金额(万)8 : 14097.93; 换手率 9: 14.49%
-						 */
-						for (List<String> dayLineData : hq) {
-							String tempDate = dayLineData.get(0);
-							// 若当前日期 已有数据，结束拉取
-							if (dayLineFromSouHuDao.checkExistsByDateAndSharesCode(tempDate, sharesCode)) {
-								log.info("拉取目标：" + sharesEntity.getSharesNameCn() + "(" + sharesCode + ") ； 日期区间：" + startDate + "  ~ " + endDate + "; 中断拉取 ，" + tempDate + "的股票数据已经拉取！");
-								break P;
-							}
-							try {
-								saveDayLineEntity(sharesCode, dayLineData);
-							} catch (Exception e) {
-								e.printStackTrace();
-								log.info("++++++saveDayLineEntity++++++ sharesCode : "+ sharesCode+" 日期区间：" + startDate + "  ~ " + endDate);
-							} 
-						}
-						log.info("拉取目标：" + sharesEntity.getSharesNameCn() + "(" + sharesCode + ") ； 日期区间：" + startDate + "  ~ " + endDate + "; 拉取成功！ 共拉取日线数据： " + hq.size());
-						endDate = DateUtils.formatDate(DateUtils.decrementDay(DateUtils.parseDate(startDate)));
-//						log.info(Thread.currentThread().getName() + "   当前线程sleep 2 秒");
-						TimeUnit.SECONDS.sleep(1);
+					} else {
+
 					}
+					if (StringUtils.isNotBlank(this.endDay)) {
+						if (this.endDay.compareTo(startDate) < 0) {
+							log.info("待抓去日期区间 : " + startDate + "  ~ " + endDate + " 不在限定日期区间范围之内：" + this.startDay + "  ~ " + this.endDay);
+							return;
+						}
+					}
+					// TODO ｓｔａｒｔ。ｅｎｄ
+
+					List<List<String>> hq = getDayLineFromSouHu(sharesEntity, startDate, endDate);
+					if (CollectionUtils.isEmpty(hq)) {
+						log.info("拉取目标：" + sharesEntity.getSharesNameCn() + "(" + sharesCode + ") ； 日期区间：" + startDate + "  ~ " + endDate + " ;拉取数据量为 0 ，结束");
+						break;
+					}
+					/*
+					 * 日期 0: 2017-07-07 ; 开盘价 1:38.30 ; 收盘价 2:39.33; 涨跌额 3:0.85;
+					 * 涨跌幅 4: 2.21%; 最低 5: 38.09; 最高 6:39.49; 成交量(手) 7:36235;
+					 * 成交金额(万)8 : 14097.93; 换手率 9: 14.49%
+					 */
+					for (List<String> dayLineData : hq) {
+						String tempDate = dayLineData.get(0);
+						// 若当前日期 已有数据，结束拉取
+						if (dayLineFromSouHuDao.checkExistsByDateAndSharesCode(tempDate, sharesCode)) {
+							log.info("拉取目标：" + sharesEntity.getSharesNameCn() + "(" + sharesCode + ") ； 日期区间：" + startDate + "  ~ " + endDate + "; 中断拉取 ，" + tempDate + "的股票数据已经拉取！");
+							break P;
+						}
+						try {
+							saveDayLineEntity(sharesCode, dayLineData);
+						} catch (Exception e) {
+							e.printStackTrace();
+							log.info("++++++saveDayLineEntity++++++ sharesCode : " + sharesCode + " 日期区间：" + startDate + "  ~ " + endDate);
+						}
+					}
+					log.info("拉取目标：" + sharesEntity.getSharesNameCn() + "(" + sharesCode + ") ； 日期区间：" + startDate + "  ~ " + endDate + "; 拉取成功！ 共拉取日线数据： " + hq.size());
+					endDate = DateUtils.formatDate(DateUtils.decrementDay(DateUtils.parseDate(startDate)));
+					// log.info(Thread.currentThread().getName() + " 当前线程sleep 2
+					// 秒");
+					TimeUnit.SECONDS.sleep(1);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -174,7 +188,7 @@ public class UpdateDayLineDateTask implements Runnable {
 		String turnoverRate = dayLineData.get(9);
 		if ("-".equals(turnoverRate)) {
 			dayLineFromSouHu.setTurnoverRate(0);
-		}else {
+		} else {
 			dayLineFromSouHu.setTurnoverRate(Double.valueOf(turnoverRate.replace("%", "")));
 		}
 		dayLineFromSouHuDao.save(dayLineFromSouHu);
@@ -190,7 +204,7 @@ public class UpdateDayLineDateTask implements Runnable {
 			respStr = fireFoxSharesAPICallerByConnPool.request(sharesCode, startDate, endDate);
 		} catch (Exception e1) {
 			e1.printStackTrace();
-			log.info("######getDayLineFromSouHu###### sharesCode : "+ sharesCode+" 日期区间：" + startDate + "  ~ " + endDate);
+			log.info("######getDayLineFromSouHu###### sharesCode : " + sharesCode + " 日期区间：" + startDate + "  ~ " + endDate);
 			return Collections.emptyList();
 		}
 		if ("historySearchHandler({})\n".equals(respStr)) {
@@ -219,7 +233,7 @@ public class UpdateDayLineDateTask implements Runnable {
 	}
 
 	private boolean isEqualOrBetween(String date) {
-		
+
 		if (StringUtils.isBlank(this.startDay) && StringUtils.isBlank(this.endDay)) {
 			return true;
 		}
