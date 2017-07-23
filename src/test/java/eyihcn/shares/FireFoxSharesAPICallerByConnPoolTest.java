@@ -63,15 +63,17 @@ public class FireFoxSharesAPICallerByConnPoolTest extends AbstractJUnit4SpringCo
 		log.info("=========================== teardown ~");
 	}
 	
+	
 	@Test
 	public void querySouHuBySharesCodeAll() {
-		pullDayLineClient.pullAll();
+		pullDayLineClient.pullAll("2017-01-01", "");
 	}
-
+	
 	@Test
 	public void querySouHuBySharesCode() {
-		new UpdateDayLineDateTask(null,fireFoxSharesAPICallerByConnPool,sharesEntityDao,dayLineFromSouHuDao,1,1).run();
+		pullDayLineClient.pullAll("2017-07-01", "", "002848");
 	}
+
 
 	@Test
 	public void testExportExecel() {

@@ -1,16 +1,22 @@
 package eyihcn.shares;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.mongodb.core.query.Criteria;
+
+import com.google.common.collect.Lists;
 
 import eyihcn.dao.DayLineFromSouHuDao;
 import eyihcn.dao.SharesEntityDao;
+import eyihcn.entity.SharesEntity;
 
 
 public class PullDayLineClient {
@@ -39,7 +45,7 @@ public class PullDayLineClient {
 		try {
 			CountDownLatch countDownLatch = new CountDownLatch(totalPageCount);
 			for (int start =1; start <= totalPageCount; start ++) {
-				exe.execute(new UpdateDayLineDateTask(countDownLatch,fireFoxSharesAPICallerByConnPool, sharesEntityDao, dayLineFromSouHuDao, start, pageSize));
+				exe.execute(new UpdateDayLineDateTask(fireFoxSharesAPICallerByConnPool, sharesEntityDao, dayLineFromSouHuDao, start, pageSize,countDownLatch));
 			}
 			countDownLatch.await();
 		} catch (InterruptedException e) {
@@ -48,5 +54,39 @@ public class PullDayLineClient {
 			exe.shutdown();
 		}
 		log.info("======== all done !");
+	}
+	
+	public void pullAll(String startDate, String endDate, String ... sharesCodes){
+		if (StringUtils.isBlank(startDate)) {
+			startDate = "";
+		}
+		if (StringUtils.isBlank(endDate)) {
+			endDate = "";
+		}
+		if (sharesCodes == null || sharesCodes.length == 0) {
+			long totalCount = sharesEntityDao.count();
+			log.info(" 将深沪A股 拉取 "+totalCount+" 只股票的日线数据");
+			ExecutorService exe = Executors.newFixedThreadPool(6);
+			int pageSize = 100;
+			int totalPageCount = (int) Math.ceil(((double)totalCount)/pageSize);
+			log.info("每页 "+pageSize+" 条数据; 一共  "+totalPageCount+" 页");
+			try {
+				CountDownLatch countDownLatch = new CountDownLatch(totalPageCount);
+				for (int start =1; start <= totalPageCount; start ++) {
+					exe.execute(new UpdateDayLineDateTask(fireFoxSharesAPICallerByConnPool, sharesEntityDao, dayLineFromSouHuDao, 
+							startDate, endDate ,start, pageSize,countDownLatch));
+				}
+				countDownLatch.await();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}finally{
+				exe.shutdown();
+			}
+			log.info("======== all done !");
+		}else {
+			List<SharesEntity> sharesEntityList = sharesEntityDao.find(Criteria.where("sharesCode").in(Lists.newArrayList(sharesCodes)));
+			UpdateDayLineOperator updateDayLineOperator = new UpdateDayLineOperator(fireFoxSharesAPICallerByConnPool,dayLineFromSouHuDao);
+			updateDayLineOperator.pull(sharesEntityList, startDate, endDate);
+		}
 	}
 }

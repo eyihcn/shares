@@ -13,7 +13,7 @@
  -->
 	<context:component-scan base-package="eyihcn.dao"></context:component-scan>
 	
-	  <mongo:mongo-client host="192.168.1.90" port="27017">
+	  <mongo:mongo-client host="192.168.191.1" port="27017">
         <mongo:client-options connections-per-host="60"
             threads-allowed-to-block-for-connection-multiplier="150"
             connect-timeout="1000" max-wait-time="1500"  />
