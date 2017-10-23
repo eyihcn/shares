@@ -21,8 +21,7 @@
 		<log4j.v>1.2.17</log4j.v>
 		<httpclient.v>4.5.2</httpclient.v>
 		<httpmime.v>4.5.2</httpmime.v>
-		<spring.webmvc.v>4.2.6.RELEASE</spring.webmvc.v>
-		<spring.test.v>4.2.6.RELEASE</spring.test.v>
+		<spring.web.v>5.0.0.RELEASE</spring.web.v>
 		<jackson.databind.v>2.8.2</jackson.databind.v>
 		<jackson.dataformat.xml.v>2.8.2</jackson.dataformat.xml.v>
 		<mongo.java.driver.v>3.3.0</mongo.java.driver.v>
@@ -70,7 +69,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.webmvc.v}</version>
+			<version>${spring.web.v}</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
