@@ -23,8 +23,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import eyihcn.dao.DayLineFromSouHuDao;
-import eyihcn.dao.SharesEntityDao;
+import eyihcn.dao.DayLineFromSouHuRepository;
+import eyihcn.dao.SharesEntityRepository;
 import eyihcn.entity.SharesEntity;
 import eyihcn.shares.utlis.DateUtils;
 
@@ -38,12 +38,11 @@ public class FireFoxSharesAPICallerByConnPoolTest extends AbstractJUnit4SpringCo
 	FireFoxSharesAPICallerByConnPool fireFoxSharesAPICallerByConnPool;
 
 	@Autowired
-	@Qualifier("sharesEntityDao")
-	SharesEntityDao sharesEntityDao;
+	SharesEntityRepository sharesEntityDao;
 
 	@Autowired
 	@Qualifier("dayLineFromSouHuDao")
-	DayLineFromSouHuDao dayLineFromSouHuDao;
+	DayLineFromSouHuRepository dayLineFromSouHuDao;
 
 	@Autowired
 	@Qualifier("pullDayLineClient")
@@ -71,13 +70,15 @@ public class FireFoxSharesAPICallerByConnPoolTest extends AbstractJUnit4SpringCo
 	
 	@Test
 	public void querySouHuBySharesCode() {
-		pullDayLineClient.pullAll("2017-07-01", "", "002848");
+//		pullDayLineClient.pullAll("2017-07-01", "2017-07-30", "000002");
+		pullDayLineClient.pullAll("2017-01-01", "", "603444");
+//		pullDayLineClient.pullAll("2017-07-01", "", "002848");
 	}
 
 
 	@Test
 	public void testExportExecel() {
-		String absPath = "C:\\Users\\lenovo\\Desktop\\2017-07-08-16-29_深.xls";
+		String absPath = "C:\\Users\\lenovo\\Desktop\\2017-08-10-21-08_rankash.xls";
 		FileInputStream in = null;
 		try {
 			in = new FileInputStream(absPath);

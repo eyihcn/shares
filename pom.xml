@@ -26,32 +26,31 @@
 		<jackson.databind.v>2.8.2</jackson.databind.v>
 		<jackson.dataformat.xml.v>2.8.2</jackson.dataformat.xml.v>
 		<mongo.java.driver.v>3.3.0</mongo.java.driver.v>
-		<spring.data.mongodb.v>1.9.2.RELEASE</spring.data.mongodb.v>
 	</properties>
 
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-test</artifactId>
+		<version>${spring.test.v}</version>
+	</dependency>
+
 	<dependencies>
+
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.v}</version>
+			<groupId>eyihcn.data.access</groupId>
+			<artifactId>spring-data-base-mongodb</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<version>3.9</version>
-		</dependency> 
+		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.9</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.springframework.data/spring-data-mongodb -->
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-mongodb</artifactId>
-			<version>${spring.data.mongodb.v}</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver -->
@@ -149,13 +148,6 @@
 			<artifactId>log4j</artifactId>
 			<version>${log4j.v}</version>
 		</dependency>
-
-
-		<!-- <dependency> -->
-		<!-- <groupId>yichen</groupId> -->
-		<!-- <artifactId>massbatchexport</artifactId> -->
-		<!-- <version>0.0.1-SNAPSHOT</version> -->
-		<!-- </dependency> -->
 
 	</dependencies>
 	<build>

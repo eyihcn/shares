@@ -1,5 +1,7 @@
 package eyihcn.entity;
 
+import eyihcn.base.entity.BaseEntity;
+
 public class DayLineFromSouHu extends BaseEntity<Integer> {
 
 	private static final long serialVersionUID = 5115664585479747954L;

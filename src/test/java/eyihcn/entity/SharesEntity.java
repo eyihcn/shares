@@ -1,5 +1,7 @@
 package eyihcn.entity;
 
+import eyihcn.base.entity.BaseEntity;
+
 public class SharesEntity extends BaseEntity<Integer> {
 
 	private static final long serialVersionUID = 6411905850616573153L;

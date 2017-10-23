@@ -5,17 +5,17 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 import com.google.common.collect.Lists;
 
-import eyihcn.dao.DayLineFromSouHuDao;
-import eyihcn.dao.SharesEntityDao;
+import eyihcn.dao.DayLineFromSouHuRepository;
+import eyihcn.dao.SharesEntityRepository;
 import eyihcn.entity.SharesEntity;
 
 
@@ -23,17 +23,14 @@ public class PullDayLineClient {
 	
 	final Logger log = LoggerFactory.getLogger(PullDayLineClient.class);
 	
-	@Autowired
-	@Qualifier("fireFoxSharesAPICallerByConnPool")
+	@Resource
 	FireFoxSharesAPICallerByConnPool fireFoxSharesAPICallerByConnPool;
 
-	@Autowired
-	@Qualifier("sharesEntityDao")
-	SharesEntityDao sharesEntityDao;
+	@Resource
+	SharesEntityRepository sharesEntityDao;
 
-	@Autowired
-	@Qualifier("dayLineFromSouHuDao")
-	DayLineFromSouHuDao dayLineFromSouHuDao;
+	@Resource
+	DayLineFromSouHuRepository dayLineFromSouHuDao;
 
 	public void pullAll(){
 		long totalCount = sharesEntityDao.count();
@@ -82,11 +79,11 @@ public class PullDayLineClient {
 			}finally{
 				exe.shutdown();
 			}
-			log.info("======== all done !");
 		}else {
 			List<SharesEntity> sharesEntityList = sharesEntityDao.find(Criteria.where("sharesCode").in(Lists.newArrayList(sharesCodes)));
 			UpdateDayLineOperator updateDayLineOperator = new UpdateDayLineOperator(fireFoxSharesAPICallerByConnPool,dayLineFromSouHuDao);
 			updateDayLineOperator.pull(sharesEntityList, startDate, endDate);
 		}
+		log.info("======== all done !");
 	}
 }

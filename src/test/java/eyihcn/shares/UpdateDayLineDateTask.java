@@ -1,19 +1,20 @@
 package eyihcn.shares;
 
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
-import eyihcn.dao.DayLineFromSouHuDao;
-import eyihcn.dao.SharesEntityDao;
+import eyihcn.dao.DayLineFromSouHuRepository;
+import eyihcn.dao.SharesEntityRepository;
 import eyihcn.entity.SharesEntity;
 import eyihcn.shares.utlis.DateUtils;
 
 public class UpdateDayLineDateTask extends UpdateDayLineOperator implements Runnable {
 
-	private SharesEntityDao sharesEntityDao;
+	private SharesEntityRepository sharesEntityDao;
 
 	private String startDay = null;
 	private String endDay = null;
@@ -26,7 +27,7 @@ public class UpdateDayLineDateTask extends UpdateDayLineOperator implements Runn
 		super();
 	}
 
-	public UpdateDayLineDateTask(FireFoxSharesAPICallerByConnPool fireFoxSharesAPICallerByConnPool, SharesEntityDao sharesEntityDao, DayLineFromSouHuDao dayLineFromSouHuDao, String startDay,
+	public UpdateDayLineDateTask(FireFoxSharesAPICallerByConnPool fireFoxSharesAPICallerByConnPool, SharesEntityRepository sharesEntityDao, DayLineFromSouHuRepository dayLineFromSouHuDao, String startDay,
 			String endDay, int pageNumber, int pageSize, CountDownLatch countDownLatch) {
 		super(fireFoxSharesAPICallerByConnPool,dayLineFromSouHuDao);
 		this.sharesEntityDao = sharesEntityDao;
@@ -37,14 +38,18 @@ public class UpdateDayLineDateTask extends UpdateDayLineOperator implements Runn
 		this.countDownLatch = countDownLatch;
 	}
 	
-	public UpdateDayLineDateTask(FireFoxSharesAPICallerByConnPool fireFoxSharesAPICallerByConnPool, SharesEntityDao sharesEntityDao, DayLineFromSouHuDao dayLineFromSouHuDao, int pageNumber, int pageSize, CountDownLatch countDownLatch) {
+	public UpdateDayLineDateTask(FireFoxSharesAPICallerByConnPool fireFoxSharesAPICallerByConnPool, SharesEntityRepository sharesEntityDao, DayLineFromSouHuRepository dayLineFromSouHuDao, int pageNumber, int pageSize, CountDownLatch countDownLatch) {
 		this(fireFoxSharesAPICallerByConnPool, sharesEntityDao, dayLineFromSouHuDao, "", DateUtils.formatDate(new Date()), pageNumber, pageSize, countDownLatch);
 	}
 
+	@Override
 	public void run() {
 		try {
-			List<SharesEntity> sharesEntityList = sharesEntityDao.find(new Criteria(), pageSize, pageNumber);
-			super.pull(sharesEntityList, startDay, endDay);
+			Pageable pageable = PageRequest.of(pageNumber, pageNumber);
+			Page<SharesEntity> onePage = sharesEntityDao.findAll(pageable);
+			if (null != onePage) {
+				super.pull(onePage.getContent(), startDay, endDay);
+			}
 			// 一个线程处理100只股票
 		} catch (Exception e) {
 			e.printStackTrace();
