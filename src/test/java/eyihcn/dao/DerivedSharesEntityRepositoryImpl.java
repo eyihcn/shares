@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.Assert;
 
 import eyihcn.entity.SharesEntity;
-
 public class DerivedSharesEntityRepositoryImpl implements DerivedSharesEntityRepository{
 
 	@Resource

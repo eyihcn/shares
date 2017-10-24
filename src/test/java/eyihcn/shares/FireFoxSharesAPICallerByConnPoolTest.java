@@ -16,20 +16,22 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import eyihcn.dao.DayLineFromSouHuRepository;
 import eyihcn.dao.SharesEntityRepository;
 import eyihcn.entity.SharesEntity;
 import eyihcn.shares.utlis.DateUtils;
 
-@ContextConfiguration(locations = { "classpath:/applicationContext-test.xml", "classpath:/mongodb.xml" })
-public class FireFoxSharesAPICallerByConnPoolTest extends AbstractJUnit4SpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:/applicationContext-test.xml", "classpath:/spring-data-mongdb.xml" })
+public class FireFoxSharesAPICallerByConnPoolTest {
 
 	final Logger log = LoggerFactory.getLogger(FireFoxSharesAPICallerByConnPoolTest.class);
 
@@ -38,6 +40,7 @@ public class FireFoxSharesAPICallerByConnPoolTest extends AbstractJUnit4SpringCo
 	FireFoxSharesAPICallerByConnPool fireFoxSharesAPICallerByConnPool;
 
 	@Autowired
+	@Qualifier("sharesEntityDao")
 	SharesEntityRepository sharesEntityDao;
 
 	@Autowired

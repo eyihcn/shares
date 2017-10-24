@@ -7,9 +7,11 @@ import java.util.concurrent.Executors;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 import com.google.common.collect.Lists;
@@ -80,9 +82,14 @@ public class PullDayLineClient {
 				exe.shutdown();
 			}
 		}else {
-			List<SharesEntity> sharesEntityList = sharesEntityDao.find(Criteria.where("sharesCode").in(Lists.newArrayList(sharesCodes)));
-			UpdateDayLineOperator updateDayLineOperator = new UpdateDayLineOperator(fireFoxSharesAPICallerByConnPool,dayLineFromSouHuDao);
-			updateDayLineOperator.pull(sharesEntityList, startDate, endDate);
+			Page<SharesEntity> queryForPage = sharesEntityDao.queryForPage(Criteria.where("sharesCode").in(Lists.newArrayList(sharesCodes)),null);
+			if (queryForPage !=null) {
+				List<SharesEntity> sharesEntityList =queryForPage.getContent();
+				if (CollectionUtils.isNotEmpty(sharesEntityList)) {
+					UpdateDayLineOperator updateDayLineOperator = new UpdateDayLineOperator(fireFoxSharesAPICallerByConnPool,dayLineFromSouHuDao);
+					updateDayLineOperator.pull(sharesEntityList, startDate, endDate);
+				}
+			}
 		}
 		log.info("======== all done !");
 	}

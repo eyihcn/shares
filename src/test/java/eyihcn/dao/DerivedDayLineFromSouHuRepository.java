@@ -1,5 +1,6 @@
 package eyihcn.dao;
 
+
 public interface DerivedDayLineFromSouHuRepository {
 	
 	boolean checkExistsByDate(String date);

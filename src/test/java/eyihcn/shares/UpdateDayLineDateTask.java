@@ -45,7 +45,7 @@ public class UpdateDayLineDateTask extends UpdateDayLineOperator implements Runn
 	@Override
 	public void run() {
 		try {
-			Pageable pageable = PageRequest.of(pageNumber, pageNumber);
+			Pageable pageable = PageRequest.of(pageNumber, pageSize);
 			Page<SharesEntity> onePage = sharesEntityDao.findAll(pageable);
 			if (null != onePage) {
 				super.pull(onePage.getContent(), startDay, endDay);
