@@ -55,14 +55,19 @@ public class PullDayLineClient {
 		log.info("======== all done !");
 	}
 	
-	public void pullAll(String startDate, String endDate, String ... sharesCodes){
+	public void pullAll(Iterable<String> sharesCodes) {
+		
+		pullAll("","", sharesCodes);
+	}
+	
+	public void pullAll(String startDate, String endDate, Iterable<String> sharesCodes){
 		if (StringUtils.isBlank(startDate)) {
 			startDate = "";
 		}
 		if (StringUtils.isBlank(endDate)) {
 			endDate = "";
 		}
-		if (sharesCodes == null || sharesCodes.length == 0) {
+		if (sharesCodes == null) {
 			long totalCount = sharesEntityDao.count();
 			log.info(" 将深沪A股 拉取 "+totalCount+" 只股票的日线数据");
 			ExecutorService exe = Executors.newFixedThreadPool(6);

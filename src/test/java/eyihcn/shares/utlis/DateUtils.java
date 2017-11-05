@@ -9,6 +9,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * 日期时间工具类
@@ -63,7 +64,7 @@ public final class DateUtils {
 	private static final Object lockObj = new Object();
 
 	/** 存放不同的日期模板格式的sdf的Map */
-	private static Map<String, ThreadLocal<SimpleDateFormat>> sdfMap = new HashMap<String, ThreadLocal<SimpleDateFormat>>();
+	private static Map<String, ThreadLocal<SimpleDateFormat>> sdfMap = new WeakHashMap<String, ThreadLocal<SimpleDateFormat>>();
 
 	/**
 	 * 返回一个ThreadLocal的sdf,每个线程只会new一次sdf

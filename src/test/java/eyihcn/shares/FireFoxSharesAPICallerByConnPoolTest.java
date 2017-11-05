@@ -3,16 +3,13 @@ package eyihcn.shares;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,24 +65,25 @@ public class FireFoxSharesAPICallerByConnPoolTest {
 	
 	@Test
 	public void querySouHuBySharesCodeAll() {
-		pullDayLineClient.pullAll("2017-01-01", "");
+		pullDayLineClient.pullAll("2017-01-01", "",null);
 	}
 	
 	@Test
 	public void querySouHuBySharesCode() {
 //		pullDayLineClient.pullAll("2017-07-01", "2017-07-30", "000002");
-		pullDayLineClient.pullAll("2017-01-01", "", "603444");
+		pullDayLineClient.pullAll(Arrays.asList("000728"));
+		
 //		pullDayLineClient.pullAll("2017-07-01", "", "002848");
 	}
 
 
 	@Test
 	public void testExportExecel() {
-		String absPath = "C:\\Users\\lenovo\\Desktop\\2017-08-10-21-08_rankash.xls";
+		String absPath = "C:\\Users\\lenovo\\Desktop\\2017-10-29-12-40_rankash.xls";
 		FileInputStream in = null;
 		try {
 			in = new FileInputStream(absPath);
-			Workbook wb = newWorkbook(in, absPath);
+			Workbook wb = ExcelUtils.newWorkbook(in, absPath);
 			Sheet sheet = wb.getSheetAt(0);
 			insertSharesEntity(sheet);
 		} catch (Exception e) {
@@ -97,7 +95,6 @@ public class FireFoxSharesAPICallerByConnPoolTest {
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 	private void insertSharesEntity(Sheet sheet) {
@@ -111,11 +108,11 @@ public class FireFoxSharesAPICallerByConnPoolTest {
 			Row next = iterRow.next();
 			SharesEntity sharesEntity = new SharesEntity();
 			// 代码
-			String sharesCode = getCellValue(next, 0).replace("sz", "").replaceAll("sh", "");
+			String sharesCode = ExcelUtils.getCellValue(next, 0).replaceAll("sz", "").replaceAll("sh", "");
 			sharesEntity.setSharesCode(sharesCode);
 			System.out.println(sharesCode);
 			// 中文名称
-			String sharesNameCn = getCellValue(next, 1);
+			String sharesNameCn = ExcelUtils.getCellValue(next, 1);
 			sharesEntity.setSharesNameCn(sharesNameCn);
 			if (!sharesEntityDao.checkExistsBySharesCode(sharesCode)) {
 				sharesEntityDao.save(sharesEntity);
@@ -123,50 +120,7 @@ public class FireFoxSharesAPICallerByConnPoolTest {
 		}
 	}
 
-	private String getCellValue(Row row, int i) {
-
-		Cell cell = row.getCell(i);
-		Object cellVal = "";
-		switch (cell.getCellType()) {
-		case Cell.CELL_TYPE_BOOLEAN:
-			// 得到Boolean对象的方法
-			cellVal = cell.getBooleanCellValue();
-			break;
-		case Cell.CELL_TYPE_NUMERIC:
-			// 先看是否是日期格式
-			if (HSSFDateUtil.isCellDateFormatted(cell)) {
-				// 读取日期格式
-				cellVal = cell.getDateCellValue();
-			} else {
-				// 读取数字
-				cellVal = cell.getNumericCellValue();
-			}
-			break;
-		case Cell.CELL_TYPE_FORMULA:
-			// 读取公式
-			cellVal = cell.getCellFormula();
-			break;
-		case Cell.CELL_TYPE_STRING:
-			// 读取String
-			cellVal = cell.getRichStringCellValue().toString();
-			break;
-		}
-		return cellVal.toString();
-	}
-
-	private Workbook newWorkbook(FileInputStream fileInputStream, String absPath) throws IOException {
-
-		Workbook wb = null;
-		if (absPath.endsWith(".xls")) {
-			// 07之前版本
-			wb = new HSSFWorkbook(fileInputStream);
-		} else if (absPath.endsWith(".xlsx")) {
-			// 07之后版本
-			wb = new XSSFWorkbook(fileInputStream);
-		}
-		return wb;
-	}
-
+	
 	@Test
 	public void testQuery() {
 		String respStr = fireFoxSharesAPICallerByConnPool.request("000958","1999-07-05","1999-11-21");
